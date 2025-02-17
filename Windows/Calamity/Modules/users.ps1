@@ -5,11 +5,22 @@ $DUMP = ($PSScriptRoot + "\..\dump\")
 
 $SecureStdPass = ConvertTo-SecureString "I<3Scripts!" -AsPlainText -Force
 
-function verifyUsersAreNotLockedOut() {
+function unlockAllUsers {
     Get-LocalUser | ForEach-Object {
-        #TODO
+        $user = $_
+        
+        if ($user.LockedOut) {
+            try {
+                # Unlock the user
+                Unlock-LocalUser -Name $user.Name
+                Write-Host "User $($user.Name) has been unlocked."
+            } catch {
+                Write-Host "Failed to unlock user $($user.Name)."
+            }
+        } 
     }
 }
+
 
 function automaticUsersPrep() {
     $URL = Get-Content ("C:\CyberPatriot\README.url")
